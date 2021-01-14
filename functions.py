@@ -141,78 +141,44 @@ def find_set_of_pages(graph):
 
     
     
-    
-    
-    
-def create_subgraph2(G, chosen_categories, c1 = 34, c2 = 646, random_pick = False):
-    
+
+
+
+def create_subgraph(G, categories, c1=34, c2=646, random_pick=False):
     """
     The function creates a subgraph by using 2 category indexes determined in the input.
-    
+
     Inputs:
     G (graph): The main graph
-    chosen_categories (dataframe): The dataframe of categories and their corresponded nodes
+    categories (dataframe): The dataframe of categories and their corresponded nodes
     c1 (int): index of the first category. Default at 34
     c2 (int): index of the second category. Default at 646
     random_pick (bool): Whether to take the categories by random. Default set to False
-    
+
     Returns:
     sub_G (graph): The subgraph created using the nodes of two categories out of the main graph (G)
-    
+
     """
-    
+    df = categories.reset_index()
+    n = len(df) + 1
+
     if random_pick:
-        c1, c2 = np.random.randint(0,870,2)
-        
-    c1_cat = chosen_categories.iloc[c1][0]
-    c2_cat = chosen_categories.iloc[c2][0]
-    c1_nodes = chosen_categories.iloc[c1][1]
-    c2_nodes = chosen_categories.iloc[c2][1]
-    
-    print("The first category is '" + c1_cat + "' Index: " + str(c1) + " \nThe second one is '" + c2_cat + "' Index: " + str(c2) )
-    c1c2_nodes = np.concatenate([c1_nodes,c2_nodes])
-    
-    return G.subgraph(c1c2_nodes)
+        c1, c2 = np.random.randint(0, n, 2)
 
+    print("First index: ", c1)
+    print("Second index: ", c2)
+    c1_cat = df.iloc[c1][0]
+    c2_cat = df.iloc[c2][0]
+    c1_nodes = df.iloc[c1][1]
+    c2_nodes = df.iloc[c2][1]
 
-
-
-
-
-def create_subgraph(G, chosen_categories, c1 = 34, c2 = 646, random_pick = False):
-    
-    """
-    The function creates a subgraph by using 2 category indexes determined in the input.
-    
-    Inputs:
-    G (graph): The main graph
-    chosen_categories (dataframe): The dataframe of categories and their corresponded nodes
-    c1 (int): index of the first category. Default at 34
-    c2 (int): index of the second category. Default at 646
-    random_pick (bool): Whether to take the categories by random. Default set to False
-    
-    Returns:
-    sub_G (graph): The subgraph created using the nodes of two categories out of the main graph (G)
-    
-    """
-    
-    if random_pick:
-        c1, c2 = np.random.randint(0,870,2)
-        
-    c1_cat = chosen_categories.iloc[c1][0]
-    c2_cat = chosen_categories.iloc[c2][0]
-    c1_nodes = chosen_categories.iloc[c1][1]
-    c2_nodes = chosen_categories.iloc[c2][1]
-    
-    print("The first category is '" + c1_cat + "' Index: " + str(c1) + " \nThe second one is '" + c2_cat + "' Index: " + str(c2) )
-    c1c2_nodes = np.concatenate([c1_nodes,c2_nodes])
+    c1c2_nodes = np.concatenate([c1_nodes, c2_nodes])
     sub_G = G.copy()
     for i in list(sub_G.nodes):
         if i not in c1c2_nodes:
             sub_G.remove_node(i)
-    
-    return sub_G
 
+    return sub_G
 
 
 
@@ -283,10 +249,27 @@ def min_remove_hyperlinks(G, source_node, target_node):
                     cuts_count += 1
             print("You need " + str(cuts_count) + " cuts to disconnect them!\n\nThe List of hyperlinks to cut:")
             return(results)
-        
-        
 
 
+        
+def pagerank(graph, N, iters, lambd = 0.85):
+    init = dict(zip(graph.nodes, np.zeros(N)))
+    x_0 = np.random.choice(graph.nodes, 1)[0]
+    for i in range(iters):
+        prob = np.random.random()
+        if prob < (1-lambd): #teleport
+            next_node = np.random.choice(graph.nodes, 1)[0]
+            init[next_node] = init[next_node] + 1/iters
+            x_0 = next_node
+        else: # out_links
+            try:
+                next_node = np.random.choice(graph_dict[x_0], 1)[0]
+            except ValueError:
+                next_node = np.random.choice(graph.nodes, 1)[0]
+            init[next_node] = init[next_node] + 1/iters
+            x_0 = next_node
+
+    return init
         
         
         
