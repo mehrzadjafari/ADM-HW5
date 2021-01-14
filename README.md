@@ -25,6 +25,8 @@
 	> A Jupyter notebook which provides the solutions to all questions. The notebook consists of outputs, comments, visualizations and further explanations.
 2. __`functions.py`__:
     > A Python script containing all the custom functions used in the `ADM-HW4.ipynb` plus useful docstrings for the user.  
+3. __`Pickle files`__:
+    > Folder with object in `Pickle` format. We decided to save them in this format to reduce runtime and avoid the necessity to rerun the code
 
 
 
