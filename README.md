@@ -7,6 +7,11 @@
 
 **Goal of the homework**: Analyzing the Wikipedia's articles network by applying graph algorithms
 
+## Group 22 members:
+    > 1. Beatrice Nobile
+    > 2. Francesca Casarano
+    > 3. Mehrzad Jafari Ranjbar
+    > 4. Dias Khalniyasov
 
 ## Main Steps:
     > 1. Creating a network based on the Wikipedia's articles
