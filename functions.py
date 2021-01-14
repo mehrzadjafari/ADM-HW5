@@ -167,8 +167,7 @@ def create_subgraph(G, categories, c1=34, c2=646, random_pick=False):
 
     print("First index: ", c1)
     print("Second index: ", c2)
-    c1_cat = df.iloc[c1][0]
-    c2_cat = df.iloc[c2][0]
+
     c1_nodes = df.iloc[c1][1]
     c2_nodes = df.iloc[c2][1]
 
