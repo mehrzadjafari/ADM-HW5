@@ -251,6 +251,61 @@ def min_remove_hyperlinks(G, source_node, target_node):
 
 
         
+def in_degree_centrality(node, in_degree):
+    max_deg = max(list(in_degree.values()))
+    in_degree_node = in_degree[node]
+    return round(in_degree_node/max_deg, 4)        
+        
+def min_clicks(graph, c_0, categories):
+    nodes = categories['pages'][c_0]
+    list_centrality = [in_degree_centrality(node, degree_in) for node in nodes]
+    v = nodes[np.argmax(np.array(list_centrality))]
+    nodes.remove(v)
+    clicks = [BFS_shortest_path(graph, v, i) for i in nodes]
+    return clicks        
+
+
+def BFS_shortest_path(graph, start_node, destination):
+    count = 1
+    visited_nodes = graph[start_node]
+    if destination in visited_nodes:
+        count = 1
+    else:
+        new_visited_nodes = [elem for i in visited_nodes for elem in graph[i] if elem not in visited_nodes]
+        count += 1
+        visited_nodes = visited_nodes + new_visited_nodes
+        while destination not in new_visited_nodes:
+            if len(visited_nodes) < len_all_vertices:
+                new_visited_nodes = [elem for node in new_visited_nodes for elem in graph[node] if elem not in visited_nodes]
+                count += 1
+                visited_nodes = visited_nodes + new_visited_nodes
+            else: 
+                count = np.inf
+                print('There is no path between the nodes indicated')
+                break
+    return count
+
+
+# c_0 and c_1 are indexes of the new_pages_per_category dataframe
+def category_shortest_path(graph, c_0, categories):
+    source_nodes = categories['pages'][c_0]
+    categories_distances = defaultdict(list)
+
+    for i in categories.index:
+        if i != c_0:
+            destination_nodes = categories['pages'][i]
+            paths = [BFS_shortest_path(graph, source, dest) for source in source_nodes for dest in destination_nodes if BFS_shortest_path(graph, source, dest) != np.inf]
+            categories_distances[i] = np.median(np.array(paths))
+    
+    keys = categories_distances.keys()
+    values = categories_distances.values()
+    results = pd.DataFrame([keys, values]).T
+    results.columns = ['categories', 'distance']
+    results.sort_values('distance', inplace = True)
+    categories_sorted = results['categories']
+        
+    return categories_sorted    
+    
 def pagerank(graph, N, iters, lambd = 0.85):
     init = dict(zip(graph.nodes, np.zeros(N)))
     x_0 = np.random.choice(graph.nodes, 1)[0]
